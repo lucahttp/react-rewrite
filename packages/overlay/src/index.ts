@@ -16,6 +16,10 @@ import { initInteraction, destroyInteraction, activateInteraction, registerToolH
 import { clearElementCache } from "./utils/element-cache.js";
 import { clearVisibilityCache } from "./utils/component-filter.js";
 import { showOnboardingHint, dismissOnboarding } from "./onboarding.js";
+import { insertImageHandler, resetImageTool } from "./tools/image.js";
+import { insertTextHandler, resetInsertTextTool } from "./tools/insert-text.js";
+import { insertContainerHandler, resetInsertContainerTool } from "./tools/insert-container.js";
+import { insertIconHandler, resetInsertIconTool } from "./tools/insert-icon.js";
 import {
   onToolChange, onStateChange, getActiveTool, setActiveTool,
   canvasUndo, canUndo, resetCanvas, hasChanges,
@@ -31,6 +35,7 @@ import { initInlineTextEdit, destroyInlineTextEdit, cancelTextEditSession } from
 import { initCanvasTransform, destroyCanvasTransform, resetCanvasTransform } from "./canvas-transform.js";
 import { COLORS, SHADOWS, RADII, TRANSITIONS, FONT_FAMILY } from "./design-tokens.js";
 import { initChangelog, destroyChangelog, addChangeEntry, isChangelogOpen, setChangelogOpen, clearChangelog } from "./changelog.js";
+import { initInsertPanel, destroyInsertPanel, deactivateInsertTool } from "./insert-panel.js";
 
 declare global {
   interface Window {
@@ -265,6 +270,7 @@ function init(): void {
   initToolsPanel();
   initInlineTextEdit();
   initInteraction();
+  initInsertPanel();
   showOnboardingHint();
 
   // Select tool uses selection.ts capture-phase listeners directly (no interaction handler needed).
@@ -414,6 +420,7 @@ function close(): void {
   moveObserver?.disconnect();
   destroyToolsPanel();
   destroyChangelog();
+  destroyInsertPanel();
   destroyInlineTextEdit();
   destroyInteraction();
   resetCanvas();

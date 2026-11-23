@@ -114,6 +114,11 @@ const DEFAULT_V4_THEME = {
     "extrabold": "800",
     "black": "900",
   } as Record<string, string>,
+  fontFamily: {
+    "sans": "ui-sans-serif, system-ui, sans-serif",
+    "serif": "ui-serif, Georgia, serif",
+    "mono": "ui-monospace, monospace",
+  } as Record<string, string>,
   borderRadius: {
     "none": "0px",
     "sm": "0.125rem",
@@ -543,6 +548,7 @@ export function resolveV3Config(projectRoot: string): typeof DEFAULT_V4_THEME | 
       opacity: flattenScale(theme.opacity as Record<string, unknown>),
       letterSpacing: flattenScale(theme.letterSpacing as Record<string, unknown>),
       lineHeight: flattenScale(theme.lineHeight as Record<string, unknown>),
+      fontFamily: {}, // V3 doesn't have fontFamily in theme object, will be handled via CSS
     };
   } catch {
     return null;
@@ -577,15 +583,16 @@ export function resolveV4Config(projectRoot: string): typeof DEFAULT_V4_THEME {
   // Map CSS custom properties back to theme scales
   // e.g. --color-blue-500 → colors["blue-500"]
   const merged = {
-    spacing: { ...DEFAULT_V4_THEME.spacing },
-    colors: { ...DEFAULT_V4_THEME.colors },
-    fontSize: { ...DEFAULT_V4_THEME.fontSize },
-    fontWeight: { ...DEFAULT_V4_THEME.fontWeight },
-    borderRadius: { ...DEFAULT_V4_THEME.borderRadius },
-    borderWidth: { ...DEFAULT_V4_THEME.borderWidth },
-    opacity: { ...DEFAULT_V4_THEME.opacity },
-    letterSpacing: { ...DEFAULT_V4_THEME.letterSpacing },
-    lineHeight: { ...DEFAULT_V4_THEME.lineHeight },
+      spacing: { ...DEFAULT_V4_THEME.spacing },
+      colors: { ...DEFAULT_V4_THEME.colors },
+      fontSize: { ...DEFAULT_V4_THEME.fontSize },
+      fontWeight: { ...DEFAULT_V4_THEME.fontWeight },
+      fontFamily: { ...DEFAULT_V4_THEME.fontFamily },
+      borderRadius: { ...DEFAULT_V4_THEME.borderRadius },
+      borderWidth: { ...DEFAULT_V4_THEME.borderWidth },
+      opacity: { ...DEFAULT_V4_THEME.opacity },
+      letterSpacing: { ...DEFAULT_V4_THEME.letterSpacing },
+      lineHeight: { ...DEFAULT_V4_THEME.lineHeight },
   };
 
   for (const [prop, value] of Object.entries(customTokens)) {
@@ -702,6 +709,7 @@ export function buildTokenMap(theme: typeof DEFAULT_V4_THEME): TailwindTokenMap 
     colors: theme.colors,
     fontSize: theme.fontSize,
     fontWeight: theme.fontWeight,
+    fontFamily: theme.fontFamily || {},
     borderRadius: theme.borderRadius,
     borderWidth: theme.borderWidth,
     opacity: theme.opacity,
@@ -711,6 +719,7 @@ export function buildTokenMap(theme: typeof DEFAULT_V4_THEME): TailwindTokenMap 
     colorsReverse: buildReverse(theme.colors),
     fontSizeReverse: buildReverse(theme.fontSize),
     fontWeightReverse: buildReverse(theme.fontWeight),
+    fontFamilyReverse: buildReverse(theme.fontFamily || {}),
     borderRadiusReverse: buildReverse(theme.borderRadius),
     borderWidthReverse: buildReverse(theme.borderWidth),
     opacityReverse: buildReverse(theme.opacity),

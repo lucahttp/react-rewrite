@@ -37,6 +37,29 @@ type PendingReorderOperation = {
   operation: Extract<BatchOperation, { op: "reorder" }>;
 };
 let pendingReorderOps: PendingReorderOperation[] = [];
+
+// --- Insert Operations (Image, Text, Container, Icon) ---
+type InsertOperation = 
+  | Extract<BatchOperation, { op: "insertImage" }>
+  | Extract<BatchOperation, { op: "insertText" }>
+  | Extract<BatchOperation, { op: "insertContainer" }>
+  | Extract<BatchOperation, { op: "insertIcon" }>;
+
+let pendingInsertions: InsertOperation[] = [];
+
+export function addPendingInsertion(op: InsertOperation): void {
+  pendingInsertions.push(op);
+  notifyStateChange();
+}
+
+export function getPendingInsertions(): InsertOperation[] {
+  return [...pendingInsertions];
+}
+
+export function clearPendingInsertions(): void {
+  pendingInsertions = [];
+}
+
 let activeTool: ToolType = "select";
 let originalsHidden = true;
 
@@ -436,6 +459,7 @@ export function resetCanvas(): void {
   undoStack = [];
   pendingPropertyOps = [];
   pendingReorderOps = [];
+  pendingInsertions = [];
   textEditDomHints.clear();
   originalsHidden = true;
   canvasScale = 1;
@@ -448,7 +472,7 @@ export function resetCanvas(): void {
 // --- Has Changes ---
 
 export function hasChanges(): boolean {
-  return moves.size > 0 || clones.size > 0 || deletes.size > 0 || annotations.length > 0 || pendingPropertyOps.length > 0 || pendingReorderOps.length > 0;
+  return moves.size > 0 || clones.size > 0 || deletes.size > 0 || annotations.length > 0 || pendingPropertyOps.length > 0 || pendingReorderOps.length > 0 || pendingInsertions.length > 0;
 }
 
 export function canUndo(): boolean {
@@ -763,6 +787,11 @@ export function buildBatchOperations(): BatchOperation[] {
 
   for (const entry of pendingReorderOps) {
     ops.push(entry.operation);
+  }
+
+  // Insertions (Image, Text, Container, Icon)
+  for (const insertion of pendingInsertions) {
+    ops.push(insertion);
   }
 
   return ops;

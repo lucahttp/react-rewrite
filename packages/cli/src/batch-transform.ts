@@ -627,6 +627,192 @@ function applyOp(j: any, root: any, rop: ResolvedOp, source: string): string | u
       }
     }
 
+    case "insertImage": {
+      try {
+        const parent = node.parent;
+        if (!parent?.node?.children) {
+          return "Cannot insert image: parent element has no children array";
+        }
+        
+        const children = parent.node.children;
+        const idx = children.indexOf(node.node);
+        if (idx < 0) {
+          return "Cannot insert image: reference element not found in parent";
+        }
+        
+        // Create JSX element: <img src={imageUrl} alt={alt} className={className} />
+        const imgAttrs = [
+          j.jsxAttribute(j.jsxIdentifier("src"), j.stringLiteral(op.imageUrl)),
+          j.jsxAttribute(j.jsxIdentifier("alt"), j.stringLiteral(op.alt || "")),
+        ];
+        
+        if (op.width) {
+          imgAttrs.push(j.jsxAttribute(j.jsxIdentifier("width"), j.literal(op.width)));
+        }
+        if (op.height) {
+          imgAttrs.push(j.jsxAttribute(j.jsxIdentifier("height"), j.literal(op.height)));
+        }
+        
+        const imgElement = j.jsxElement(
+          j.jsxOpeningElement(j.jsxIdentifier("img"), imgAttrs, true),
+          null,
+          []
+        );
+        
+        // Insert after the reference element
+        children.splice(idx + 1, 0, imgElement);
+        return undefined;
+      } catch (err) {
+        return `Failed to insert image: ${err instanceof Error ? err.message : String(err)}`;
+      }
+    }
+
+    case "insertText": {
+      try {
+        const parent = node.parent;
+        if (!parent?.node?.children) {
+          return "Cannot insert text: parent element has no children array";
+        }
+        
+        const children = parent.node.children;
+        const idx = children.indexOf(node.node);
+        if (idx < 0) {
+          return "Cannot insert text: reference element not found in parent";
+        }
+        
+        // Create JSX element: <span className={className}>{text}</span>
+        const textElement = j.jsxElement(
+          j.jsxOpeningElement(
+            j.jsxIdentifier(op.elementTagName || "span"),
+            op.elementClassName ? [j.jsxAttribute(j.jsxIdentifier("className"), j.stringLiteral(op.elementClassName))] : [],
+            false
+          ),
+          j.jsxClosingElement(j.jsxIdentifier(op.elementTagName || "span")),
+          [j.jsxText(op.text)]
+        );
+        
+        // Insert after the reference element
+        children.splice(idx + 1, 0, textElement);
+        return undefined;
+      } catch (err) {
+        return `Failed to insert text: ${err instanceof Error ? err.message : String(err)}`;
+      }
+    }
+
+    case "insertContainer": {
+      try {
+        if (op.wrapSelected) {
+          // Wrap the selected element
+          const wrapperElement = j.jsxElement(
+            j.jsxOpeningElement(
+              j.jsxIdentifier(op.containerType),
+              op.containerClassName ? [j.jsxAttribute(j.jsxIdentifier("className"), j.stringLiteral(op.containerClassName))] : [],
+              false
+            ),
+            j.jsxClosingElement(j.jsxIdentifier(op.containerType)),
+            [node.node]
+          );
+          
+          // Replace the original node with the wrapper
+          j(node).replaceWith(wrapperElement);
+        } else {
+          // Insert as sibling
+          const parent = node.parent;
+          if (!parent?.node?.children) {
+            return "Cannot insert container: parent element has no children array";
+          }
+          
+          const children = parent.node.children;
+          const idx = children.indexOf(node.node);
+          if (idx < 0) {
+            return "Cannot insert container: reference element not found in parent";
+          }
+          
+          const containerElement = j.jsxElement(
+            j.jsxOpeningElement(
+              j.jsxIdentifier(op.containerType),
+              op.containerClassName ? [j.jsxAttribute(j.jsxIdentifier("className"), j.stringLiteral(op.containerClassName))] : [],
+              false
+            ),
+            j.jsxClosingElement(j.jsxIdentifier(op.containerType)),
+            []
+          );
+          
+          children.splice(idx + 1, 0, containerElement);
+        }
+        return undefined;
+      } catch (err) {
+        return `Failed to insert container: ${err instanceof Error ? err.message : String(err)}`;
+      }
+    }
+
+    case "insertIcon": {
+      try {
+        const parent = node.parent;
+        if (!parent?.node?.children) {
+          return "Cannot insert icon: parent element has no children array";
+        }
+        
+        const children = parent.node.children;
+        const idx = children.indexOf(node.node);
+        if (idx < 0) {
+          return "Cannot insert icon: reference element not found in parent";
+        }
+        
+        // Determine icon component name based on library
+        let iconComponentName: string;
+        switch (op.iconLibrary) {
+          case "lucide":
+            iconComponentName = op.iconName;
+            break;
+          case "heroicons":
+            iconComponentName = `${op.iconName}Icon`;
+            break;
+          case "phosphor":
+            iconComponentName = `${op.iconName}`;
+            break;
+          case "radix":
+            iconComponentName = `${op.iconName}Icon`;
+            break;
+          default:
+            iconComponentName = op.iconName;
+        }
+        
+        // Create props
+        const iconProps: any[] = [];
+        if (op.size) {
+          iconProps.push(j.jsxAttribute(j.jsxIdentifier("size"), j.literal(op.size)));
+        }
+        if (op.strokeWidth) {
+          iconProps.push(j.jsxAttribute(j.jsxIdentifier("strokeWidth"), j.literal(op.strokeWidth)));
+        }
+        if (op.color) {
+          iconProps.push(j.jsxAttribute(j.jsxIdentifier("color"), j.stringLiteral(op.color)));
+        }
+        
+        // Create JSX element: <IconName size={size} strokeWidth={strokeWidth} />
+        const iconElement = j.jsxElement(
+          j.jsxOpeningElement(
+            j.jsxIdentifier(iconComponentName),
+            iconProps,
+            true
+          ),
+          null,
+          []
+        );
+        
+        // Insert after the reference element
+        children.splice(idx + 1, 0, iconElement);
+        
+        // TODO: Add import statement for the icon library if not already imported
+        // This would require scanning the file for existing imports and adding if missing
+        
+        return undefined;
+      } catch (err) {
+        return `Failed to insert icon: ${err instanceof Error ? err.message : String(err)}`;
+      }
+    }
+
     default: {
       const _exhaustive: never = op;
       return `Unknown operation type: ${_exhaustive}`;

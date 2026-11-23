@@ -9,6 +9,7 @@ export interface MergedTokenMap {
   colors: Map<string, string>;
   fontSize: Map<string, string>;
   fontWeight: Map<string, string>;
+  fontFamily: Map<string, string>;
   borderRadius: Map<string, string>;
   borderWidth: Map<string, string>;
   opacity: Map<string, string>;
@@ -18,6 +19,7 @@ export interface MergedTokenMap {
   colorsReverse: Map<string, string>;
   fontSizeReverse: Map<string, string>;
   fontWeightReverse: Map<string, string>;
+  fontFamilyReverse: Map<string, string>;
   borderRadiusReverse: Map<string, string>;
   borderWidthReverse: Map<string, string>;
   opacityReverse: Map<string, string>;
@@ -92,6 +94,7 @@ export function readCSSCustomProperties(): Partial<TailwindTokenMap> {
   const colors: Record<string, string> = {};
   const fontSize: Record<string, string> = {};
   const fontWeight: Record<string, string> = {};
+  const fontFamily: Record<string, string> = {};
   const borderRadius: Record<string, string> = {};
   const borderWidth: Record<string, string> = {};
   const opacity: Record<string, string> = {};
@@ -102,6 +105,7 @@ export function readCSSCustomProperties(): Partial<TailwindTokenMap> {
   const colorsReverse: Record<string, string> = {};
   const fontSizeReverse: Record<string, string> = {};
   const fontWeightReverse: Record<string, string> = {};
+  const fontFamilyReverse: Record<string, string> = {};
   const borderRadiusReverse: Record<string, string> = {};
   const borderWidthReverse: Record<string, string> = {};
   const opacityReverse: Record<string, string> = {};
@@ -152,6 +156,13 @@ export function readCSSCustomProperties(): Partial<TailwindTokenMap> {
       continue;
     }
 
+    // --font-family-{token}
+    const fontFamilyMatch = prop.match(/^--font-family-(.+)$/);
+    if (fontFamilyMatch) {
+      addToken(fontFamily, fontFamilyReverse, fontFamilyMatch[1], value);
+      continue;
+    }
+
     // --radius-{token}
     const radiusMatch = prop.match(/^--radius-(.+)$/);
     if (radiusMatch) {
@@ -193,6 +204,7 @@ export function readCSSCustomProperties(): Partial<TailwindTokenMap> {
     colors,
     fontSize,
     fontWeight,
+    fontFamily,
     borderRadius,
     borderWidth,
     opacity,
@@ -202,6 +214,7 @@ export function readCSSCustomProperties(): Partial<TailwindTokenMap> {
     colorsReverse,
     fontSizeReverse,
     fontWeightReverse,
+    fontFamilyReverse,
     borderRadiusReverse,
     borderWidthReverse,
     opacityReverse,
@@ -219,6 +232,7 @@ const SCALE_KEYS = [
   "colors",
   "fontSize",
   "fontWeight",
+  "fontFamily",
   "borderRadius",
   "borderWidth",
   "opacity",
@@ -228,6 +242,7 @@ const SCALE_KEYS = [
   "colorsReverse",
   "fontSizeReverse",
   "fontWeightReverse",
+  "fontFamilyReverse",
   "borderRadiusReverse",
   "borderWidthReverse",
   "opacityReverse",

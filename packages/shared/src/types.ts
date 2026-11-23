@@ -151,6 +151,90 @@ export type BatchOperation =
       fileMtime?: number;
       fileSize?: number;
       jsxPath?: JSXStructuralPath;
+    }
+  | {
+      op: "insertImage";
+      file: string;
+      line: number;
+      col: number;
+      componentName?: string;
+      tagName?: string;
+      className?: string;
+      parentTagName?: string;
+      parentClassName?: string;
+      nthOfType?: number;
+      id?: string;
+      jsxKey?: string;
+      fileMtime?: number;
+      fileSize?: number;
+      jsxPath?: JSXStructuralPath;
+      imageUrl: string;
+      alt?: string;
+      width?: number;
+      height?: number;
+      objectFit?: string;
+    }
+  | {
+      op: "insertText";
+      file: string;
+      line: number;
+      col: number;
+      componentName?: string;
+      tagName?: string;
+      className?: string;
+      parentTagName?: string;
+      parentClassName?: string;
+      nthOfType?: number;
+      id?: string;
+      jsxKey?: string;
+      fileMtime?: number;
+      fileSize?: number;
+      jsxPath?: JSXStructuralPath;
+      text: string;
+      elementTagName: "p" | "span" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "div";
+      elementClassName?: string;
+    }
+  | {
+      op: "insertContainer";
+      file: string;
+      line: number;
+      col: number;
+      componentName?: string;
+      tagName?: string;
+      className?: string;
+      parentTagName?: string;
+      parentClassName?: string;
+      nthOfType?: number;
+      id?: string;
+      jsxKey?: string;
+      fileMtime?: number;
+      fileSize?: number;
+      jsxPath?: JSXStructuralPath;
+      containerType: "div" | "section" | "article" | "aside" | "main" | "header" | "footer" | "nav";
+      containerClassName?: string;
+      wrapSelected?: boolean;
+    }
+  | {
+      op: "insertIcon";
+      file: string;
+      line: number;
+      col: number;
+      componentName?: string;
+      tagName?: string;
+      className?: string;
+      parentTagName?: string;
+      parentClassName?: string;
+      nthOfType?: number;
+      id?: string;
+      jsxKey?: string;
+      fileMtime?: number;
+      fileSize?: number;
+      jsxPath?: JSXStructuralPath;
+      iconLibrary: "lucide" | "heroicons" | "phosphor" | "radix";
+      iconName: string;
+      size?: number;
+      strokeWidth?: number;
+      color?: string;
     };
 
 export type ClientMessage =
@@ -312,8 +396,8 @@ export interface SiblingInfo {
 
 // --- Property Inspector Types ---
 
-export type ControlType = "number-scrub" | "segmented" | "color-swatch" | "box-model";
-export type PropertyGroup = "layout" | "spacing" | "size" | "typography" | "background";
+export type ControlType = "number-scrub" | "segmented" | "color-swatch" | "box-model" | "font-dropdown" | "image-upload" | "icon-picker";
+export type PropertyGroup = "layout" | "spacing" | "size" | "typography" | "background" | "content";
 
 export interface PropertyDescriptor {
   key: string;
@@ -351,6 +435,7 @@ export interface TailwindTokenMap {
   colors: Record<string, string>;
   fontSize: Record<string, string>;
   fontWeight: Record<string, string>;
+  fontFamily: Record<string, string>;
   borderRadius: Record<string, string>;
   borderWidth: Record<string, string>;
   opacity: Record<string, string>;
@@ -360,6 +445,7 @@ export interface TailwindTokenMap {
   colorsReverse: Record<string, string>;
   fontSizeReverse: Record<string, string>;
   fontWeightReverse: Record<string, string>;
+  fontFamilyReverse: Record<string, string>;
   borderRadiusReverse: Record<string, string>;
   borderWidthReverse: Record<string, string>;
   opacityReverse: Record<string, string>;

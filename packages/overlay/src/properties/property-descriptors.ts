@@ -112,6 +112,16 @@ export const SIZE_DESCRIPTORS: PropertyDescriptor[] = [
 
 // --- Typography ---
 export const TYPOGRAPHY_DESCRIPTORS: PropertyDescriptor[] = [
+  {
+    key: "fontFamily",
+    label: "Family",
+    group: "typography",
+    controlType: "font-dropdown",
+    cssProperty: "font-family",
+    tailwindPrefix: "font",
+    tailwindScale: "fontFamily",
+    defaultValue: "sans-serif",
+  },
   { key: "fontSize", label: "Size", group: "typography", controlType: "number-scrub", cssProperty: "font-size", tailwindPrefix: "text", tailwindScale: "fontSize", defaultValue: "16px", min: 0, classPattern: "^text-(xs|sm|base|lg|xl|\\d+xl|\\[.+\\])$" },
   {
     key: "fontWeight", label: "Weight", group: "typography", controlType: "segmented", cssProperty: "font-weight", tailwindPrefix: "font", tailwindScale: "fontWeight", defaultValue: "400",

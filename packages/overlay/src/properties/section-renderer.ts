@@ -4,6 +4,7 @@ import { createNumberScrub } from "./controls/number-scrub.js";
 import { createSegmented } from "./controls/segmented.js";
 import { createColorSwatch } from "./controls/color-swatch.js";
 import { createBoxModel } from "./controls/box-model.js";
+import { createFontDropdown } from "./controls/font-dropdown.js";
 import { COLORS, FONT_FAMILY, RADII, TRANSITIONS } from "../design-tokens.js";
 
 // Persists collapse state across re-renders and element selections
@@ -37,6 +38,7 @@ const GROUP_LABELS: Record<PropertyGroup, string> = {
   size: "Size",
   typography: "Typography",
   background: "Background",
+  content: "Content",
 };
 
 type ControlFactory = (
@@ -51,6 +53,7 @@ const CONTROL_FACTORIES: Record<string, ControlFactory> = {
   "segmented": createSegmented,
   "color-swatch": createColorSwatch,
   "box-model": createBoxModel,
+  "font-dropdown": createFontDropdown,
 };
 
 // ---------------------------------------------------------------------------
